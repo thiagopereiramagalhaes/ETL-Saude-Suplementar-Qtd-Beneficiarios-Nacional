@@ -7,6 +7,7 @@ class Transform:
         self.monitor_memory = Monitor_Memory().monitor_memory()
 
     def transform(self, csv_file, year, month, state):
+        df_output = pd.DataFrame()
         df_temp = pd.read_csv(csv_file,delimiter=';', encoding='utf-8',dtype={'coluna_11': str}, low_memory=False)
         df_temp['Ano'] = year
         df_temp['Mes'] = month
