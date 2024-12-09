@@ -1,5 +1,5 @@
 from datetime import datetime 
-from models.periodo_processado import Periodo_Processado as pp
+from models import periodo_processado
 
 class Config:
     def __init__(self):
@@ -13,7 +13,7 @@ class Config:
         
         self.now_month = self.sysdate.month
         
-        self.list_years = range(pp().get_last_date(), self.now_year + 1)
+        self.list_years = range(periodo_processado.Periodo_Processado().get_last_date(), self.now_year + 1)
         
         self.list_months = range(1,12 + 1)
         
