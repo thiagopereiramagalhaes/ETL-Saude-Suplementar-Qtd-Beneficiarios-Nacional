@@ -1,18 +1,21 @@
-from models.periodo_processado import Periodo_Processado as pp
-from models.qtd_beneficiarios_nacional_ans import Qtd_Beneficiarios_Nacional_Ans as qtdbna
+from models import periodo_processado
+from models import qtd_beneficiarios_nacional_ans
+from config import monitor
 
 class Load:
     def __init__(self):
-        self.insert_last_date = pp().insert_last_date()
-        self.insert_qtdbna = qtdbna().insert_qtdbna()
+        self.insert_last_date = periodo_processado.Periodo_Processado()
+        self.insert_qtdbna = qtd_beneficiarios_nacional_ans.Qtd_Beneficiarios_Nacional_Ans()
+        self.monitor_memory = monitor.Monitor_Memory()
 
     def load(self, df_output, year, month, state):
         output_path = "base_ans_qtd_beneficiarios_nacional.csv"
         df_output.to_csv(output_path, index = False)
 
-        self.insert_qtdbna(df_output['ID_CMPT_MOVEL'], df_output['CD_OPERADORA'], df_output['NM_RAZAO_SOCIAL'], df_output['SG_UF'], df_output['CD_MUNICIPIO'], df_output['NM_MUNICIPIO'], df_output['DE_CONTRATACAO_PLANO'], df_output['QT_BENEFICIARIO_ATIVO'])
+        data_to_insert = df_output[['ID_CMPT_MOVEL', 'CD_OPERADORA', 'NM_RAZAO_SOCIAL', 'SG_UF', 'CD_MUNICIPIO', 'NM_MUNICIPIO', 'DE_CONTRATACAO_PLANO', 'QT_BENEFICIARIO_ATIVO']].values.tolist()
 
-        self.insert_last_date(year, month, state, 'COMPLETO')
-        del csv_file
+        self.insert_qtdbna.insert_qtdbna(data_to_insert)
+
+        #self.insert_last_date.insert_last_date(year, month, state, 'COMPLETO')
         del df_output
-        self.monitor_memory()
+        self.monitor_memory.monitor_memory()
