@@ -1,10 +1,10 @@
 import pandas as pd
-from load.load import Load
-from config.monitor import Monitor_Memory
+from load import load
+from config import monitor
 
 class Transform:
     def __init__(self):
-        self.monitor_memory = Monitor_Memory().monitor_memory()
+        self.monitor_memory = monitor.Monitor_Memory()
 
     def transform(self, csv_file, year, month, state):
         df_output = pd.DataFrame()
@@ -14,4 +14,5 @@ class Transform:
         df_temp['Estado'] = state
         df_output = pd.concat([df_output, df_temp], ignore_index=True)
 
-        Load().load(df_output, year, month, state)
+        load.Load().load(df_output, year, month, state)
+        self.monitor_memory.monitor_memory()
