@@ -1,8 +1,8 @@
-from db.db import DB
+from db import db
 class Periodo_Processado:
     def __init__(self):
-        self.cursor = DB().conn
-        self.conn = DB().cursor
+        self.cursor = db.DB().cursor
+        self.conn = db.DB().conn
         self.cursor.execute('''
             CREATE TABLE IF NOT EXISTS periodo_processado (
                 ano INTEGER,
@@ -12,8 +12,9 @@ class Periodo_Processado:
                 PRIMARY KEY (ano, mes, estado)
             )
         ''')
+        
         self.conn.commit()
-        self.conn.close()
+        #self.conn.close()
     
     def get_last_date(self):
             self.cursor.execute('SELECT * FROM periodo_processado ORDER BY ano DESC, mes DESC, estado DESC LIMIT 1')
