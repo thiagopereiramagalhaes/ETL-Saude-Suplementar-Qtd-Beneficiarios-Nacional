@@ -5,7 +5,7 @@ import time
 from tqdm import tqdm 
 from io import BytesIO
 from config.config import Config
-from db.db import DB
+from models.periodo_processado import Periodo_Processado as pp
 from config.monitor import Monitor_Memory
 from transform.transform import Transform
 
@@ -13,7 +13,7 @@ class Extract():
     def __init__(self):
         self.list_tasks = Config().list_tasks
         self.base_url = Config().base_url
-        #self.insert_last_date = DB().insert_last_date()
+        self.insert_last_date = pp().insert_last_date()
         self.monitor_memory = Monitor_Memory().monitor_memory()
         self.transform = Transform().transform()
 
@@ -29,12 +29,12 @@ class Extract():
                                     if file.endswith('.csv'):
 
                                         with z.open(file) as csv_file:
-                                            self.transform(csv_file)
-                                            #self.insert_last_date(year, month, state, 'COMPLETO')
+                                            self.transform(csv_file, year, month, state)
+                                            
 
                     except Exception as e:
                         print(f"Erro ao processar {url}: {e}")
-                        #self.insert_last_date(year, month, state, e)
+                        self.insert_last_date(year, month, state, e)
                     
                     pbar.update(1)
                     time.sleep(3)

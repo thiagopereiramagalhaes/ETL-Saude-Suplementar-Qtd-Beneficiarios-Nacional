@@ -1,8 +1,9 @@
 from datetime import datetime 
+from models.periodo_processado import Periodo_Processado as pp
 
 class Config:
     def __init__(self):
-        self.limit_mb = 1000
+        self.limit_mb = 8000
 
         self.base_url = "https://dadosabertos.ans.gov.br/FTP/PDA/informacoes_consolidadas_de_beneficiarios-024"
         
@@ -12,7 +13,7 @@ class Config:
         
         self.now_month = self.sysdate.month
         
-        self.list_years = range(DB().get_last_date(), self.now_year + 1)
+        self.list_years = range(pp().get_last_date(), self.now_year + 1)
         
         self.list_months = range(1,12 + 1)
         
