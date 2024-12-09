@@ -1,11 +1,11 @@
 import psutil
 import os
 import gc
-from config import Config
+from config import config
 
 class Monitor_Memory:
     def __init__(self):
-        limit_mb = Config().limit_mb
+        self.limit_mb = config.Config().limit_mb
         
     def monitor_memory(self):
         process = psutil.Process(os.getpid())
