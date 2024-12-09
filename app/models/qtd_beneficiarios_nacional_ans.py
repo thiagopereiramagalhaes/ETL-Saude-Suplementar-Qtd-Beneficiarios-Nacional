@@ -1,8 +1,8 @@
-from db.db import DB
+from db import db
 class Qtd_Beneficiarios_Nacional_Ans:
     def __init__(self):
-        self.cursor = DB().conn
-        self.conn = DB().cursor
+        self.cursor = db.DB().cursor
+        self.conn = db.DB().conn
         self.cursor.execute('''
             CREATE TABLE IF NOT EXISTS qtd_beneficiarios_nacional_ans (
                 ID_CMPT_MOVEL INTEGER,
@@ -16,12 +16,15 @@ class Qtd_Beneficiarios_Nacional_Ans:
             )
         ''')
         self.conn.commit()
+        #self.conn.close()
+
+    def insert_qtdbna(self, data_to_insert):
+        self.cursor.executemany('''
+            INSERT INTO qtd_beneficiarios_nacional_ans (
+            ID_CMPT_MOVEL, CD_OPERADORA, NM_RAZAO_SOCIAL, SG_UF, 
+            CD_MUNICIPIO, NM_MUNICIPIO, DE_CONTRATACAO_PLANO, QT_BENEFICIARIO_ATIVO
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)''', data_to_insert)
+        self.conn.commit()
         self.conn.close()
 
-    def insert_qtdbna(self, ID_CMPT_MOVEL, CD_OPERADORA, NM_RAZAO_SOCIAL, SG_UF, CD_MUNICIPIO, NM_MUNICIPIO, DE_CONTRATACAO_PLANO, QT_BENEFICIARIO_ATIVO):
-        self.cursor.execute('''
-            INSERT OR REPLACE INTO qtd_beneficiarios_nacional_ans (ID_CMPT_MOVEL, CD_OPERADORA, NM_RAZAO_SOCIAL, SG_UF, CD_MUNICIPIO, NM_MUNICIPIO, DE_CONTRATACAO_PLANO, QT_BENEFICIARIO_ATIVO)
-            VALUES (?, ?, ?, ?,?, ?, ?, ?)
-        ''', (ID_CMPT_MOVEL, CD_OPERADORA, NM_RAZAO_SOCIAL, SG_UF, CD_MUNICIPIO, NM_MUNICIPIO, DE_CONTRATACAO_PLANO, QT_BENEFICIARIO_ATIVO))
-        self.conn.commit()
         self.conn.close()
