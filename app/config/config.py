@@ -13,7 +13,7 @@ class Config:
         
         self.now_month = self.sysdate.month
         
-        self.list_years = range(periodo_processado.Periodo_Processado().get_last_date(), self.now_year + 1)
+        self.list_years = 2024#range(periodo_processado.Periodo_Processado().get_last_date(), self.now_year + 1)
         
         self.list_months = range(1,12 + 1)
         
