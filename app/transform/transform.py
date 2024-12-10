@@ -13,7 +13,7 @@ class Transform:
         df_temp['Mes'] = month
         df_temp['Estado'] = state
         df_output = pd.concat([df_output, df_temp], ignore_index=True)
-        df_output = df_output.groupby('ID_CMPT_MOVEL', 'CD_OPERADORA', 'NM_RAZAO_SOCIAL', 'SG_UF', 'CD_MUNICIPIO', 'NM_MUNICIPIO', 'DE_CONTRATACAO_PLANO')['QT_BENEFICIARIO_ATIVO'].sum().reset_index()
+        df_output = df_output.groupby(['ID_CMPT_MOVEL', 'CD_OPERADORA', 'NM_RAZAO_SOCIAL', 'SG_UF', 'CD_MUNICIPIO', 'NM_MUNICIPIO', 'DE_CONTRATACAO_PLANO'])['QT_BENEFICIARIO_ATIVO'].sum().reset_index()
 
 
         load.Load().load(df_output, year, month, state)

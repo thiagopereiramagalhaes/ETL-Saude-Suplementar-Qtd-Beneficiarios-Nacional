@@ -25,12 +25,12 @@ class Periodo_Processado:
             elif last_date and last_date[2] != 'COMPLETO':
                 return last_date[0]
             else:
-                return 2019
+                return 2024
     
     def insert_last_date(self,year, month, state, log):
         self.cursor.execute('''
             INSERT OR REPLACE INTO periodo_processado (ano, mes, estado, log)
             VALUES (?, ?, ?, ?)
-        ''', (year, month, state, log))
+        ''', (year, month, state, str(log)))
         self.conn.commit()
         self.conn.close()
