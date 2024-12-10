@@ -9,11 +9,10 @@ class Load:
         self.monitor_memory = monitor.Monitor_Memory()
 
     def load(self, df_output, year, month, state):
-        output_path = "base_ans_qtd_beneficiarios_nacional.csv"
-        data_to_insert = df_output[['ID_CMPT_MOVEL', 'CD_OPERADORA', 'NM_RAZAO_SOCIAL', 'SG_UF', 'CD_MUNICIPIO', 'NM_MUNICIPIO', 'DE_CONTRATACAO_PLANO', 'QT_BENEFICIARIO_ATIVO']].values.tolist()
-        #df_output.to_csv(data_to_insert, index = False)
-        self.insert_qtdbna.insert_qtdbna(data_to_insert)
-
-        #self.insert_last_date.insert_last_date(year, month, state, 'COMPLETO')
+        output_path = "D:/base_ans_qtd_beneficiarios_nacional.csv"
+        data_to_insert = df_output[['ID_CMPT_MOVEL', 'CD_OPERADORA', 'NM_RAZAO_SOCIAL', 'SG_UF', 'CD_MUNICIPIO', 'NM_MUNICIPIO', 'DE_CONTRATACAO_PLANO', 'QT_BENEFICIARIO_ATIVO']]
+        data_to_insert.to_csv(output_path, index = False, sep=';')
+        #self.insert_qtdbna.insert_qtdbna(data_to_insert.values.tolist())
+        self.insert_last_date.insert_last_date(year, month, state, 'COMPLETO')
         del df_output
         self.monitor_memory.monitor_memory()
