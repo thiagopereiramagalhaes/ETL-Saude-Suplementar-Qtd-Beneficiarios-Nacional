@@ -10,10 +10,8 @@ class Load:
 
     def load(self, df_output, year, month, state):
         output_path = "base_ans_qtd_beneficiarios_nacional.csv"
-        df_output.to_csv(output_path, index = False)
-
         data_to_insert = df_output[['ID_CMPT_MOVEL', 'CD_OPERADORA', 'NM_RAZAO_SOCIAL', 'SG_UF', 'CD_MUNICIPIO', 'NM_MUNICIPIO', 'DE_CONTRATACAO_PLANO', 'QT_BENEFICIARIO_ATIVO']].values.tolist()
-
+        #df_output.to_csv(data_to_insert, index = False)
         self.insert_qtdbna.insert_qtdbna(data_to_insert)
 
         #self.insert_last_date.insert_last_date(year, month, state, 'COMPLETO')
