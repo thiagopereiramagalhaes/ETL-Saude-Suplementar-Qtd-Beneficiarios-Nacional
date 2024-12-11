@@ -1,28 +1,23 @@
 from datetime import datetime 
-from models import periodo_processado
+import requests
 
 class Config:
     def __init__(self):
-        self.limit_mb = 8000
-
         self.base_url = "https://dadosabertos.ans.gov.br/FTP/PDA/informacoes_consolidadas_de_beneficiarios-024"
-        
-        self.sysdate = datetime.now()
-        
-        self.now_year = self.sysdate.year
-        
-        self.now_month = self.sysdate.month
-        
-        self.list_years = range(periodo_processado.Periodo_Processado().get_last_date(), self.now_year + 1)
-        
-        self.list_months = range(1,12 + 1)
-        
+                
+                        
         self.list_states = ["AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "MT", 
                             "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO"]
+
+        self.list_url = self.is_url_available()
+
+    def is_url_available(self):
+        list_url = []
+        for year in range(2024,datetime.now().year+1):
+            for month in range(10,12+1):
+                for state in self.list_states:
+                    if requests.head(f"{self.base_url}/{year}{month:02d}/").status_code == 200:
+                        list_url.append(f"{self.base_url}/{year}{month:02d}/pda-024-icb-{state}-{year}_{month:02d}.zip")  
         
-        self.list_tasks = [
-            (year, month, state) 
-            for year in self.list_years 
-            for month in (range(4, 12 + 1) if year == 2019 else range(1, 12 + 1) if year < self.now_year else range(1, self.now_month + 1)) 
-            for state in self.list_states
-        ]
+        
+        return list_url

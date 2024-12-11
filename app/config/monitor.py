@@ -1,16 +1,28 @@
 import psutil
 import os
 import gc
-from config import config
+import logging
 
-class Monitor_Memory:
-    def __init__(self):
-        self.limit_mb = config.Config().limit_mb
-        
-    def monitor_memory(self):
+
+class MonitorMemory:
+    def __init__(self, limit_mb=8000, terminate_on_exceed=True):
+        self.limit_mb = limit_mb
+        self.terminate_on_exceed = terminate_on_exceed
+
+
+    def set_memory_limit(self, limit_mb):
+        self.limit_mb = limit_mb
+
+    def get_memory_usage(self):
         process = psutil.Process(os.getpid())
-        memory_used = process.memory_info().rss / (1024 * 1024)  # memória usada em MB
+        return process.memory_info().rss / (1024 * 1024)
+    
+    def init(self):
+        memory_used = self.get_memory_usage()
+
         gc.collect()
+
         if memory_used > self.limit_mb:
-            print(f"Memória excedeu o limite de {self.limit_mb}MB. Liberando recursos...")
-            os._exit(1) 
+            if self.terminate_on_exceed:
+                logging.error(f"Memória máxima atingida: {memory_used}", exc_info=True)
+                os._exit(1)

@@ -1,18 +1,34 @@
-from models import periodo_processado
 from models import qtd_beneficiarios_nacional_ans
 from config import monitor
+import logging
 
 class Load:
-    def __init__(self):
-        self.insert_last_date = periodo_processado.Periodo_Processado()
-        self.insert_qtdbna = qtd_beneficiarios_nacional_ans.Qtd_Beneficiarios_Nacional_Ans()
-        self.monitor_memory = monitor.Monitor_Memory()
+    def __init__(self, output_path="base_ans_qtd_beneficiarios_nacional.csv"):
+        self.insert_qtdbna = qtd_beneficiarios_nacional_ans.QtdBeneficiariosNacionalAns()
+        self.monitor_memory = monitor.MonitorMemory()
+        self.output_path = output_path
 
-    def load(self, df_output, year, month, state):
-        output_path = "D:/base_ans_qtd_beneficiarios_nacional.csv"
-        data_to_insert = df_output[['ID_CMPT_MOVEL', 'CD_OPERADORA', 'NM_RAZAO_SOCIAL', 'SG_UF', 'CD_MUNICIPIO', 'NM_MUNICIPIO', 'DE_CONTRATACAO_PLANO', 'QT_BENEFICIARIO_ATIVO']]
-        data_to_insert.to_csv(output_path, index = False, sep=';')
-        #self.insert_qtdbna.insert_qtdbna(data_to_insert.values.tolist())
-        self.insert_last_date.insert_last_date(year, month, state, 'COMPLETO')
+    def save_to_csv(self, df, path=None, activate = True):
+        if activate:
+            if path is None:
+                path = self.output_path
+
+            try:
+                df.to_csv(path, index=False, sep=';')
+
+            except Exception as e:
+                logging.error(f"Erro ao salvar: {path}. Motivo: {e}")
+
+    def insert_into_db(self, data_to_insert):
+            self.insert_qtdbna(data_to_insert)
+
+    def init(self, df_output, url):
+        try:
+            self.save_to_csv(df_output, f"{df_output['SG_UF'][0]}{df_output['ID_CMPT_MOVEL'][0]}.csv" )
+            self.insert_qtdbna.insert_data_into_db(df_output.values.tolist())
+            #logging.info(f"{url}: Carregado com sucesso.")
+        except Exception as e:
+            logging.error(f"{url}: Falha ao carregar. Motivo: {e}")
+        
         del df_output
-        self.monitor_memory.monitor_memory()
+        self.monitor_memory.init()

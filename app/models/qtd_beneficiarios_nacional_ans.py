@@ -1,44 +1,58 @@
-from db import db
+from db import database
+import sqlite3
+import logging
 
-class Qtd_Beneficiarios_Nacional_Ans:
-    def __init__(self):
-        # Inicializa conexão e cursor
-        self.conn = db.DB().conn
-        self.cursor = self.conn.cursor()
-        # Cria a tabela se não existir
-        self.cursor.execute('''
-            CREATE TABLE IF NOT EXISTS qtd_beneficiarios_nacional_ans (
-                ID_CMPT_MOVEL INTEGER,
-                CD_OPERADORA INTEGER,
-                NM_RAZAO_SOCIAL TEXT,
-                SG_UF TEXT,
-                CD_MUNICIPIO TEXT,
-                NM_MUNICIPIO TEXT,
-                DE_CONTRATACAO_PLANO TEXT,
-                QT_BENEFICIARIO_ATIVO INTEGER
-            )
-        ''')
-        self.conn.commit()
 
-    def close_connection(self):
-        # Fecha a conexão de forma segura
-        if self.conn:
-            self.conn.close()
-
-    def insert_qtdbna(self, data_to_insert):
-        try:
-            # Valida se os dados estão no formato esperado (lista de tuplas)
-            if not isinstance(data_to_insert, list) or not all(isinstance(row, tuple) for row in data_to_insert):
-                raise ValueError("Os dados devem ser uma lista de tuplas.")
-            
-            self.cursor.executemany('''
-                INSERT INTO qtd_beneficiarios_nacional_ans (
-                    ID_CMPT_MOVEL, CD_OPERADORA, NM_RAZAO_SOCIAL, SG_UF, 
-                    CD_MUNICIPIO, NM_MUNICIPIO, DE_CONTRATACAO_PLANO, QT_BENEFICIARIO_ATIVO
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            ''', data_to_insert)
-            self.conn.commit()
-        except Exception as e:
-            print(f"Erro ao inserir os dados: {e}")
-        finally:
-            self.close_connection()  # Garante que a conexão seja fechada
+class QtdBeneficiariosNacionalAns:
+    def __init__(self, db_path='db.db'):
+        self.db_path = db_path
+        with database.DataBase(self.db_path) as db:
+            db.execute_query('''
+                CREATE TABLE IF NOT EXISTS qtd_beneficiarios_nacional_ans (
+                    ID_CMPT_MOVEL,
+                    CD_OPERADORA, 
+                    NM_RAZAO_SOCIAL, 
+                    NR_CNPJ, 
+                    MODALIDADE_OPERADORA, 
+                    SG_UF, 
+                    CD_MUNICIPIO, 
+                    NM_MUNICIPIO, 
+                    TP_SEXO, 
+                    DE_FAIXA_ETARIA, 
+                    DE_FAIXA_ETARIA_REAJ, 
+                    DE_CONTRATACAO_PLANO,
+                    COBERTURA_ASSIST_PLAN,
+                    QT_BENEFICIARIO_ATIVO,
+                    QT_BENEFICIARIO_ADERIDO,
+                    QT_BENEFICIARIO_CANCELADO
+                )
+            ''')
+    def insert_data_into_db(self, data_to_insert):
+        query = '''
+            INSERT INTO qtd_beneficiarios_nacional_ans (
+                    ID_CMPT_MOVEL,
+                    CD_OPERADORA, 
+                    NM_RAZAO_SOCIAL, 
+                    NR_CNPJ, 
+                    MODALIDADE_OPERADORA, 
+                    SG_UF, 
+                    CD_MUNICIPIO, 
+                    NM_MUNICIPIO, 
+                    TP_SEXO, 
+                    DE_FAIXA_ETARIA, 
+                    DE_FAIXA_ETARIA_REAJ, 
+                    DE_CONTRATACAO_PLANO,
+                    COBERTURA_ASSIST_PLAN,
+                    QT_BENEFICIARIO_ATIVO,
+                    QT_BENEFICIARIO_ADERIDO,
+                    QT_BENEFICIARIO_CANCELADO
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        '''
+        with database.DataBase(self.db_path) as db:
+            try:
+                db.cursor.executemany(query, data_to_insert)
+                db.conn.commit()
+            except sqlite3.IntegrityError as e:
+                logging.error(f"Erro ao gravar dados em: qtd_beneficiarios_nacional_ans. Motivo: {e}")
+            except sqlite3.Error as e:
+                logging.error(f"Erro ao gravar dados em: qtd_beneficiarios_nacional_ans. Motivo: {e}")

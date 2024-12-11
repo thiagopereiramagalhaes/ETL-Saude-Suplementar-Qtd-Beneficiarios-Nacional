@@ -2,40 +2,45 @@ import requests
 import zipfile
 import pandas as pd
 import time
+import logging
 from tqdm import tqdm 
 from io import BytesIO
 from config import config
-from models import periodo_processado
 from config import monitor
 from transform import transform
 
-class Extract():
+class Extract:
     def __init__(self):
-        self.list_tasks = config.Config().list_tasks
+        self.list_url = config.Config().list_url
         self.base_url = config.Config().base_url
-        self.insert_last_date = periodo_processado.Periodo_Processado()
-        self.monitor_memory = monitor.Monitor_Memory()
+        self.monitor_memory = monitor.MonitorMemory()
         self.transform = transform.Transform()
 
-    def extract(self):
-        with tqdm(total=len(self.list_tasks), desc="Baixando dados", unit="dados") as pbar:
-                for year, month, state in self.list_tasks:
-                    url = f"{self.base_url}/{year}{month:02d}/pda-024-icb-{state}-{year}_{month:02d}.zip"
-                    try:
-                        response = requests.get(url, stream=True)
-                        if response.status_code == 200:
-                            with zipfile.ZipFile(BytesIO(response.content)) as z:
-                                for file in z.namelist():
-                                    if file.endswith('.csv'):
+    def download_data(self, url):
+        try:
+            response = requests.get(url, stream=True, timeout=30)
+            response.raise_for_status()
+            return BytesIO(response.content)
+        except requests.RequestException as e:
+            logging.error(f"Erro ao baixar os dados em: {url}. Motivo: {e}")
 
-                                        with z.open(file) as csv_file:
-                                            self.transform.transform(csv_file, year, month, state)
-                                            
+    def extract_and_process_zip(self, zip_content, url):
+        try:
+            with zipfile.ZipFile(zip_content) as z:
+                for file in z.namelist():
+                    if file.endswith('csv'):
+                        with z.open(file) as csv_file:
+                            self.transform.init(csv_file, url)
+        except zipfile.BadZipFile as e:
+            logging.error(f"Erro ao extrair dados: {e}")
+        
+    def init(self):
+        with tqdm(total=len(self.list_url), desc="Baixando dados", unit="periodo/uf") as pbar:
+            for url in self.list_url:
+                zip_content = self.download_data(url)
+                if zip_content:
+                    self.extract_and_process_zip(zip_content, url)
 
-                    except Exception as e:
-                        print(f"Erro ao processar {url}: {e}")
-                        self.insert_last_date.insert_last_date(year, month, state, e)
-                    
-                    pbar.update(1)
-                    time.sleep(3)
-                    self.monitor_memory.monitor_memory()
+                pbar.update(1)
+                time.sleep(2)
+                self.monitor_memory.init()
