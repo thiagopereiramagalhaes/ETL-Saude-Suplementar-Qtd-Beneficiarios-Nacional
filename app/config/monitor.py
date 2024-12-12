@@ -21,7 +21,6 @@ class MonitorMemory:
         memory_used = self.get_memory_usage()
 
         gc.collect()
-
         if memory_used > self.limit_mb:
             if self.terminate_on_exceed:
                 logging.error(f"Memória máxima atingida: {memory_used}", exc_info=True)

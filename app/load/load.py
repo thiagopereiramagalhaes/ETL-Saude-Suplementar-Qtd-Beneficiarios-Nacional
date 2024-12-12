@@ -8,7 +8,7 @@ class Load:
         self.monitor_memory = monitor.MonitorMemory()
         self.output_path = output_path
 
-    def save_to_csv(self, df, path=None, activate = True):
+    def save_to_csv(self, df, path=None, activate = False):
         if activate:
             if path is None:
                 path = self.output_path
