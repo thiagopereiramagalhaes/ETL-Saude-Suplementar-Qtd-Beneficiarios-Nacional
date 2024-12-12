@@ -44,6 +44,9 @@ class Transform:
             
         df_temp = df_temp[df_temp['COBERTURA_ASSIST_PLAN'] == 'Médico-hospitalar']
         df_temp = df_temp.groupby(columns_group, as_index=False)[columns_sum].sum()
+        df_temp['ID_CMPT_MOVEL'] = df_temp['ID_CMPT_MOVEL'].str.replace('-', '', regex=False)
+
+        
         self.monitor_memory.init()
         load.Load().init(df_temp, url)
         del df_temp

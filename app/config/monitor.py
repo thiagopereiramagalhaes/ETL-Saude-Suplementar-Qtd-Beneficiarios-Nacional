@@ -5,7 +5,7 @@ import logging
 
 
 class MonitorMemory:
-    def __init__(self, limit_mb=8000, terminate_on_exceed=True):
+    def __init__(self, limit_mb=5000, terminate_on_exceed=True):
         self.limit_mb = limit_mb
         self.terminate_on_exceed = terminate_on_exceed
 

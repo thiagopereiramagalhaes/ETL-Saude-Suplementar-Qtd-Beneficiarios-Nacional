@@ -13,7 +13,7 @@ class Config:
 
     def is_url_available(self):
         list_url = []
-        for year in range(2024,datetime.now().year+1):
+        for year in range(2022,datetime.now().year+1):
             for month in range(1,12+1):
                 for state in self.list_states:
                     if requests.head(f"{self.base_url}/{year}{month:02d}/").status_code == 200:
