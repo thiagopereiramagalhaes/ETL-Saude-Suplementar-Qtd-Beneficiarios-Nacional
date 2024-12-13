@@ -1,8 +1,12 @@
 from datetime import datetime 
 import requests
+from urllib3.exceptions import InsecureRequestWarning
+import urllib3
 
 class Config:
     def __init__(self):
+        urllib3.disable_warnings(InsecureRequestWarning)
+
         self.base_url = "https://dadosabertos.ans.gov.br/FTP/PDA/informacoes_consolidadas_de_beneficiarios-024"
                 
                         
@@ -16,7 +20,7 @@ class Config:
         for year in range(2022,datetime.now().year+1):
             for month in range(1,12+1):
                 for state in self.list_states:
-                    if requests.head(f"{self.base_url}/{year}{month:02d}/").status_code == 200:
+                    if requests.head(f"{self.base_url}/{year}{month:02d}/", verify=False).status_code == 200:
                         list_url.append(f"{self.base_url}/{year}{month:02d}/pda-024-icb-{state}-{year}_{month:02d}.zip")  
         
         return list_url

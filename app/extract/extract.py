@@ -8,6 +8,8 @@ from io import BytesIO
 from config import config
 from config import monitor
 from transform import transform
+from urllib3.exceptions import InsecureRequestWarning
+import urllib3
 
 class Extract:
     def __init__(self):
@@ -15,10 +17,11 @@ class Extract:
         self.base_url = config.Config().base_url
         self.monitor_memory = monitor.MonitorMemory()
         self.transform = transform.Transform()
+        urllib3.disable_warnings(InsecureRequestWarning)
 
     def download_data(self, url):
         try:
-            response = requests.get(url, stream=True, timeout=30)
+            response = requests.get(url, stream=True, timeout=30, verify=False)
             response.raise_for_status()
             return BytesIO(response.content)
         except requests.RequestException as e:
