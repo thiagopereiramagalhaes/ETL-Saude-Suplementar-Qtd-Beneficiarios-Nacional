@@ -20,7 +20,7 @@ class Config:
         for year in range(2022,datetime.now().year+1):
             for month in range(1,12+1):
                 for state in self.list_states:
-                    if requests.head(f"{self.base_url}/{year}{month:02d}/", verify=False).status_code == 200:
+                    if requests.head(f"{self.base_url}/{year}{month:02d}/", timeout=90, verify=False).status_code == 200:
                         list_url.append(f"{self.base_url}/{year}{month:02d}/pda-024-icb-{state}-{year}_{month:02d}.zip")  
         
         return list_url

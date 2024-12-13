@@ -21,7 +21,7 @@ class Extract:
 
     def download_data(self, url):
         try:
-            response = requests.get(url, stream=True, timeout=30, verify=False)
+            response = requests.get(url, stream=True, timeout=90, verify=False)
             response.raise_for_status()
             return BytesIO(response.content)
         except requests.RequestException as e:
