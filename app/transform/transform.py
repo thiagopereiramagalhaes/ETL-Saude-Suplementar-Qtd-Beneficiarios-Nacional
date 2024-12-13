@@ -9,11 +9,30 @@ class Transform:
 
     def read_csv(self, csv_file):
         try:
+            dtypes = {
+                "ID_CMPT_MOVEL": "str",
+                "CD_OPERADORA": "str", 
+                "NM_RAZAO_SOCIAL": "str", 
+                "NR_CNPJ": "str", 
+                "MODALIDADE_OPERADORA": "str", 
+                "SG_UF": "str", 
+                "CD_MUNICIPIO": "str", 
+                "NM_MUNICIPIO": "str", 
+                "TP_SEXO": "str", 
+                "DE_FAIXA_ETARIA": "str", 
+                "DE_FAIXA_ETARIA_REAJ": "str", 
+                "DE_CONTRATACAO_PLANO": "str",
+                "COBERTURA_ASSIST_PLAN": "str",
+                "QT_BENEFICIARIO_ATIVO": "int64",
+                "QT_BENEFICIARIO_ADERIDO": "int64",
+                "QT_BENEFICIARIO_CANCELADO": "int64"
+            }
             return pd.read_csv(
                 csv_file,
                 delimiter=';',
                 encoding='utf-8',
-                low_memory=False
+                low_memory=False,
+                dtype=dtypes
             )
 
         except pd.errors.ParserError as e:
